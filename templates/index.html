@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Survey</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .modal { display: none; }
+        .modal.is-open { display: flex; }
+        /* Style for disabled button */
+        button:disabled {
+            cursor: not-allowed;
+            background-color: #9ca3af; /* gray-400 */
+        }
+        button:disabled:hover {
+            background-color: #9ca3af; /* gray-400 */
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto max-w-4xl px-4 py-8 md:py-12">
+        
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Choose Better Feedback</h1>
+            <p class="text-lg text-gray-600 mt-2">
+                Review the feedback options for your essay and rank them based on which you find most helpful.
+            </p>
+            <div class="mt-2 text-sm text-gray-500">Participant ID: <span class="font-semibold">{{ participant.id }}</span></div>
+        </header>
+
+        <!-- Quiz Section -->
+        <div class="mb-10 bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+            <h2 class="text-xl font-semibold mb-3">Quiz Question</h2>
+            <div class="prose max-w-none text-gray-700">
+                <p>{{ quiz_question.content }}</p>
+            </div>
+            <div class="mt-4">
+                <!-- --- MODIFIED: Image source now points to a single, static file named 'quiz.png' --- -->
+                <img src="{{ url_for('static', filename='img/quiz.png') }}" 
+                     alt="Quiz Image" 
+                     class="w-1/2 h-auto rounded-lg border border-gray-200"
+                     onerror="this.style.display='none'; this.onerror=null;">
+            </div>
+        </div>
+
+        <!-- Essay Section -->
+        <div class="mb-10 bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+            <h2 class="text-xl font-semibold mb-3">Your Essay</h2>
+            <div class="prose max-w-none text-gray-700 bg-gray-50/50 p-4 rounded-md border border-gray-200">
+                <p>{{ essay.content }}</p>
+            </div>
+        </div>
+
+        <!-- Feedback Options Section -->
+        <div class="mb-10">
+            <h2 class="text-xl font-semibold mb-4">Feedback Options</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Option A -->
+                <div class="bg-white p-5 rounded-lg border border-gray-200 shadow-sm">
+                    <h3 class="font-bold text-lg text-blue-600 mb-2">Feedback A</h3>
+                    <p class="text-gray-700">{{ question.feedback_a.content }}</p>
+                </div>
+                <!-- Option B -->
+                <div class="bg-white p-5 rounded-lg border border-gray-200 shadow-sm">
+                    <h3 class="font-bold text-lg text-blue-600 mb-2">Feedback B</h3>
+                    <p class="text-gray-700">{{ question.feedback_b.content }}</p>
+                </div>
+                <!-- Option C (conditional) -->
+                {% if question.feedback_c %}
+                <div class="bg-white p-5 rounded-lg border border-gray-200 shadow-sm md:col-span-2 lg:col-span-1">
+                    <h3 class="font-bold text-lg text-blue-600 mb-2">Feedback C</h3>
+                    <p class="text-gray-700">{{ question.feedback_c.content }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Answer Form Section -->
+        <form id="survey-form" class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+             <input type="hidden" id="participant-id" value="{{ participant.id }}">
+             <input type="hidden" id="question-id" value="{{ question.id }}">
+
+            <div class="mb-6">
+                <label for="rank-1" class="block text-lg font-semibold mb-3">1. Rank the feedback from best to worst</label>
+                <div class="flex items-center justify-center space-x-4 bg-gray-100 p-4 rounded-md">
+                    <input type="text" id="rank-1" name="rank-1" class="w-16 h-12 text-center text-xl font-bold rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 uppercase ranking-input" placeholder="A" maxlength="1">
+                    <span class="text-2xl font-semibold text-gray-400">&gt;</span>
+                    <input type="text" id="rank-2" name="rank-2" class="w-16 h-12 text-center text-xl font-bold rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 uppercase ranking-input" placeholder="B" maxlength="1">
+                    {% if question.feedback_c %}
+                    <span class="text-2xl font-semibold text-gray-400">&gt;</span>
+                    <input type="text" id="rank-3" name="rank-3" class="w-16 h-12 text-center text-xl font-bold rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 uppercase ranking-input" placeholder="C" maxlength="1">
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <label for="reason" class="block text-lg font-semibold mb-3">2. (Optional) Why did you choose this ranking?</label>
+                <textarea id="reason" name="reason" rows="4" class="w-full p-3 border rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="I felt that Feedback A was more specific..."></textarea>
+            </div>
+            
+            <!-- Container for validation errors -->
+            <div id="error-message" class="text-red-600 font-medium text-right h-6 mb-2"></div>
+
+            <div class="flex justify-end">
+                <!-- Submit button now has an ID and is disabled by default -->
+                <button id="submit-btn" type="submit" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300" disabled>
+                    Submit
+                </button>
+            </div>
+        </form>
+
+    </div>
+
+    <!-- Completion Modal -->
+    <div id="completion-modal" class="modal fixed inset-0 bg-gray-800 bg-opacity-75 items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+            <h3 class="text-2xl font-bold mb-2">Submission Successful!</h3>
+            <p id="modal-message" class="text-gray-600 mb-6">Thank you for completing the survey.</p>
+            <button id="close-modal-btn" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('survey-form');
+            const modal = document.getElementById('completion-modal');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const modalMessage = document.getElementById('modal-message');
+            
+            // --- NEW: Elements for validation and button disabling ---
+            const submitBtn = document.getElementById('submit-btn');
+            const errorMessage = document.getElementById('error-message');
+            const rankInputs = Array.from(document.querySelectorAll('.ranking-input'));
+            const hasThirdOption = document.getElementById('rank-3') !== null;
+
+            // --- NEW: Function to check if all inputs are filled ---
+            const checkInputs = () => {
+                const allFilled = rankInputs.every(input => input.value.trim() !== '');
+                submitBtn.disabled = !allFilled;
+            };
+
+            // --- NEW: Add event listener to each ranking input ---
+            rankInputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    errorMessage.textContent = ''; // Clear error on new input
+                    checkInputs();
+                });
+            });
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                errorMessage.textContent = ''; // Reset error message
+
+                const ranks = rankInputs.map(input => input.value.trim().toUpperCase());
+                const chosenOptions = new Set(ranks);
+
+                // --- NEW: Validation Logic ---
+                const validOptions = hasThirdOption ? ['A', 'B', 'C'] : ['A', 'B'];
+
+                // 1. Check for duplicates
+                if (chosenOptions.size !== rankInputs.length) {
+                    errorMessage.textContent = 'Each feedback option must be used exactly once.';
+                    return;
+                }
+                
+                // 2. Check if all submitted ranks are valid options
+                const allValid = ranks.every(rank => validOptions.includes(rank));
+                if (!allValid) {
+                    errorMessage.textContent = `Please use only the letters ${validOptions.join(', ')}.`;
+                    return;
+                }
+
+                // --- End of Validation Logic ---
+
+                const ranking = ranks.join(' > ');
+                const data = {
+                    participant_id: document.getElementById('participant-id').value,
+                    question_id: document.getElementById('question-id').value,
+                    ranking: ranking,
+                    reason: document.getElementById('reason').value
+                };
+
+                try {
+                    const response = await fetch('/submit', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Server responded with status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    modalMessage.textContent = result.message;
+                    modal.classList.add('is-open');
+
+                } catch (error) {
+                    console.error('Error submitting form:', error);
+                    errorMessage.textContent = 'A network error occurred. Please try again.';
+                }
+            });
+
+            closeModalBtn.addEventListener('click', () => {
+                modal.classList.remove('is-open');
+                window.location.reload();
+            });
+
+            // Initial check in case of browser auto-fill
+            checkInputs();
+        });
+    </script>
+</body>
+</html>
