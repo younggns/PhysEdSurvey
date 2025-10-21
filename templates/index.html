@@ -25,11 +25,12 @@
     <div class="container mx-auto max-w-4xl px-4 py-8 md:py-12">
         
         <header class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">Choose Better Feedback</h1>
+            <h1 class="text-3xl font-bold text-gray-900">Quiz 6. Choose Better Feedback</h1>
             <p class="text-lg text-gray-600 mt-2">
-                Review the feedback options for your strategy essay and rank them based on which you find most helpful.
+                Review the feedback options for your strategy essay and choose an option which you find most helpful.
             </p>
-            <div class="mt-2 text-sm text-gray-500">Participant ID: <span class="font-semibold">{{ participant.id }}</span></div>
+            <!-- <div class="mt-2 text-sm text-gray-500">Participant ID: <span class="font-semibold">{{ participant.id }}</span></div> -->
+            <div class="mt-2 text-sm text-gray-500">Student ID: <span class="font-semibold">{{ participant.id }}</span></div>
         </header>
 
         <!-- Quiz Section -->
@@ -42,7 +43,7 @@
                 <!-- --- MODIFIED: Image source now points to a single, static file named 'quiz.png' --- -->
                 <img src="{{ url_for('static', filename='img/quiz.png') }}" 
                      alt="Quiz Image" 
-                     class="w-1/2 h-auto rounded-lg border border-gray-200"
+                     class="w-1/2 h-auto rounded-lg"
                      onerror="this.style.display='none'; this.onerror=null;">
             </div>
         </div>
@@ -58,7 +59,7 @@
         <!-- Feedback Options Section -->
         <div class="mb-10">
             <h2 class="text-xl font-semibold mb-4">Feedback Options</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                 <!-- Option A -->
                 <div class="bg-white p-5 rounded-lg border border-gray-200 shadow-sm">
                     <h3 class="font-bold text-lg text-blue-600 mb-2">Feedback A</h3>
@@ -70,12 +71,12 @@
                     <p class="text-gray-700">{{ question.feedback_b.content }}</p>
                 </div>
                 <!-- Option C (conditional) -->
-                {% if question.feedback_c %}
+                <!-- {% if question.feedback_c %}
                 <div class="bg-white p-5 rounded-lg border border-gray-200 shadow-sm md:col-span-2 lg:col-span-1">
                     <h3 class="font-bold text-lg text-blue-600 mb-2">Feedback C</h3>
                     <p class="text-gray-700">{{ question.feedback_c.content }}</p>
                 </div>
-                {% endif %}
+                {% endif %} -->
             </div>
         </div>
 
@@ -85,21 +86,45 @@
              <input type="hidden" id="question-id" value="{{ question.id }}">
 
             <div class="mb-6">
-                <label for="rank-1" class="block text-lg font-semibold mb-3">1. Rank the feedback from best to worst</label>
+                <label for="rank-1" class="block text-lg font-semibold mb-3">1. Choose better feedback</label>
                 <div class="flex items-center justify-center space-x-4 bg-gray-100 p-4 rounded-md">
                     <input type="text" id="rank-1" name="rank-1" class="w-16 h-12 text-center text-xl font-bold rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 uppercase ranking-input" placeholder="A" maxlength="1">
                     <span class="text-2xl font-semibold text-gray-400">&gt;</span>
                     <input type="text" id="rank-2" name="rank-2" class="w-16 h-12 text-center text-xl font-bold rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 uppercase ranking-input" placeholder="B" maxlength="1">
-                    {% if question.feedback_c %}
+                    <!-- {% if question.feedback_c %}
                     <span class="text-2xl font-semibold text-gray-400">&gt;</span>
                     <input type="text" id="rank-3" name="rank-3" class="w-16 h-12 text-center text-xl font-bold rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 uppercase ranking-input" placeholder="C" maxlength="1">
-                    {% endif %}
+                    {% endif %} -->
                 </div>
             </div>
 
-            <div class="mb-6">
+            <!-- <div class="mb-6">
                 <label for="reason" class="block text-lg font-semibold mb-3">2. (Optional) Why did you choose this ranking?</label>
                 <textarea id="reason" name="reason" rows="4" class="w-full p-3 border rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="I felt that Feedback A was more specific..."></textarea>
+            </div> -->
+
+            <div class="mb-6">
+                <label for="reason1" class="block text-lg font-semibold mb-3">2. Why did you choose this ranking?</label>
+                <p class="text-gray-600 mb-6">Please select all that apply. At least one option is required.</p>
+                <div id="reason-group" class="space-y-4">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="reason1" name="reason" value="Helps me better understand the concept" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <label for="reason1" class="ml-3 text-lg text-gray-700">Helps me better understand the concept</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="reason2" name="reason" value="Assesses my strategy in a more detailed way" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <label for="reason2" class="ml-3 text-lg text-gray-700">Assesses my strategy in a more detailed way</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="reason3" name="reason" value="Aligns better with my level of knowledge" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <label for="reason3" class="ml-3 text-lg text-gray-700">Aligns better with my level of knowledge</label>
+                    </div>
+                    <div class="flex items-center flex-wrap">
+                        <input type="checkbox" id="reason-other" name="reason" value="Other" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <label for="reason-other" class="ml-3 text-lg text-gray-700">Other</label>
+                        <input type="text" id="other-text" placeholder="Please specify" class="ml-8 p-2 border rounded-md w-64">
+                    </div>
+                </div>
             </div>
             
             <!-- Container for validation errors -->
@@ -142,12 +167,28 @@
             const submitBtn = document.getElementById('submit-btn');
             const errorMessage = document.getElementById('error-message');
             const rankInputs = Array.from(document.querySelectorAll('.ranking-input'));
-            const hasThirdOption = document.getElementById('rank-3') !== null;
+            const checkboxInputs = Array.from(document.querySelectorAll('input[name="reason"]'));
+            // const hasThirdOption = document.getElementById('rank-3') !== null;
+
+            const reasonCheckboxes = document.querySelectorAll('input[name="reason"]');
+            const otherCheckbox = document.getElementById('reason-other');
+            const otherTextInput = document.getElementById('other-text');
 
             // --- NEW: Function to check if all inputs are filled ---
             const checkInputs = () => {
+                // let isRankingValid = false;
                 const allFilled = rankInputs.every(input => input.value.trim() !== '');
-                submitBtn.disabled = !allFilled;
+
+                let isReasonValid = Array.from(reasonCheckboxes).some(checkbox => checkbox.checked);
+                // If 'Other' is checked, the accompanying text box must not be empty.
+                if (otherCheckbox.checked && otherTextInput.value.trim() === '') {
+                    isReasonValid = false;
+                }
+
+                // Enable or disable submit button based on both ranking and reason validity
+                // submitBtn.disabled = !(isRankingValid && isReasonValid);
+
+                submitBtn.disabled = !(allFilled && isReasonValid);
             };
 
             // --- NEW: Add event listener to each ranking input ---
@@ -157,6 +198,15 @@
                     checkInputs();
                 });
             });
+            checkboxInputs.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    checkInputs();
+                });
+            });
+
+            // Also re-validate when user types in the 'Other' text box
+            otherTextInput.addEventListener('input', () => {checkInputs();});
+
 
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -166,7 +216,8 @@
                 const chosenOptions = new Set(ranks);
 
                 // --- NEW: Validation Logic ---
-                const validOptions = hasThirdOption ? ['A', 'B', 'C'] : ['A', 'B'];
+                // const validOptions = hasThirdOption ? ['A', 'B', 'C'] : ['A', 'B'];
+                const validOptions = ['A', 'B'];
 
                 // 1. Check for duplicates
                 if (chosenOptions.size !== rankInputs.length) {
@@ -184,11 +235,34 @@
                 // --- End of Validation Logic ---
 
                 const ranking = ranks.join(' > ');
+
+                const reasons = [];
+                const checkedBoxes = document.querySelectorAll('input[name="reason"]:checked');
+                checkedBoxes.forEach(checkbox => {
+                    if (checkbox.id === 'reason-other') {
+                        const otherText = otherTextInput.value.trim();
+                        // Only include "Other" reason if the text box has content
+                        if (otherText) {
+                            reasons.push(`Other: ${otherText}`);
+                        }
+                    } else {
+                        reasons.push(checkbox.value);
+                    }
+                });
+                const reason = reasons.join('; ');
+
+                // const payload = {
+                //     participant_id: participantId,
+                //     question_id: parseInt(questionId, 10),
+                //     ranking: ranking,
+                //     reason: reasonText
+                // };
+
                 const data = {
                     participant_id: document.getElementById('participant-id').value,
                     question_id: document.getElementById('question-id').value,
                     ranking: ranking,
-                    reason: document.getElementById('reason').value
+                    reason: reason
                 };
 
                 try {

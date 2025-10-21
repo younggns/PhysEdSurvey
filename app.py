@@ -58,11 +58,11 @@ class SurveyQuestion(db.Model):
     
     feedback_a_id = db.Column(db.Integer, ForeignKey('feedback.id'))
     feedback_b_id = db.Column(db.Integer, ForeignKey('feedback.id'))
-    feedback_c_id = db.Column(db.Integer, ForeignKey('feedback.id'), nullable=True) # Optional 3rd feedback
+    # feedback_c_id = db.Column(db.Integer, ForeignKey('feedback.id'), nullable=True) # Optional 3rd feedback
 
     feedback_a = relationship("Feedback", foreign_keys=[feedback_a_id])
     feedback_b = relationship("Feedback", foreign_keys=[feedback_b_id])
-    feedback_c = relationship("Feedback", foreign_keys=[feedback_c_id])
+    # feedback_c = relationship("Feedback", foreign_keys=[feedback_c_id])
     
     participant = relationship("Participant", back_populates="survey_question")
     response = relationship("Response", uselist=False, back_populates="survey_question")
@@ -133,3 +133,4 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(port=int(os.environ.get("PORT", 8080)),host='0.0.0.0',debug=True)
+    

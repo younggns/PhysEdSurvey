@@ -35,16 +35,16 @@ def init_db_from_csv(csv_filepath=f'{os.getcwd()}/static/data/feedback.csv'):
                 essay = Essay(participant=participant, content=row['essay'])
 
                 # 3. Create the three unique Feedback objects
-                # feedback_orig = Feedback(content=row['feedback-original'])
-                feedback_lvl1 = Feedback(content=row['feedback-level1'])
-                feedback_lvl2 = Feedback(content=row['feedback-level2'])
+                feedback_a = Feedback(content=row['feedback-a'])
+                feedback_b = Feedback(content=row['feedback-b'])
+                # feedback_lvl2 = Feedback(content=row['feedback-level2'])
 
                 # 4. Create the SurveyQuestion, linking the participant to their specific feedback
                 survey_question = SurveyQuestion(
                     participant=participant,
-                    # feedback_a=feedback_orig,
-                    feedback_b=feedback_lvl1,
-                    feedback_c=feedback_lvl2
+                    feedback_a=feedback_a,
+                    feedback_b=feedback_b,
+                    # feedback_c=feedback_lvl2
                 )
                 
                 # Add all the new objects for this participant to the session
@@ -53,9 +53,9 @@ def init_db_from_csv(csv_filepath=f'{os.getcwd()}/static/data/feedback.csv'):
                     participant, 
                     quiz_question,
                     essay, 
-                    # feedback_orig, 
-                    feedback_lvl1, 
-                    feedback_lvl2, 
+                    feedback_a, 
+                    feedback_b, 
+                    # feedback_lvl2, 
                     survey_question
                 ])
 
