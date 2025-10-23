@@ -80,7 +80,7 @@ class Response(db.Model):
     """Stores the participant's submitted answers."""
     id = db.Column(db.Integer, primary_key=True)
     participant_id = db.Column(db.String(80), ForeignKey('participant.id'))
-    # participant_uniquename = db.Column(db.String(80), ForeignKey('uniquename.content'))
+    participant_uniquename = db.Column(db.String(80))
     survey_question_id = db.Column(db.Integer, ForeignKey('survey_question.id'))
     ranking = db.Column(db.String(100), nullable=False)
     reason = db.Column(db.Text, nullable=True)
@@ -88,7 +88,7 @@ class Response(db.Model):
 
     participant = relationship("Participant", back_populates="responses")
     survey_question = relationship("SurveyQuestion", back_populates="response")
-    # uniquename = relationship("Uniquename", back_populates="response")
+    # quizquestion = relationship("QuizQuestion", back_populates="response")
 
 
 # --- Web Routes ---
