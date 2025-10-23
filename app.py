@@ -27,17 +27,24 @@ db = SQLAlchemy(app)
 class Participant(db.Model):
     """Represents a survey participant."""
     id = db.Column(db.String(80), primary_key=True)
-    quiz_question = relationship("QuizQuestion", uselist=False, back_populates="participant")
+    uniquename = relationship("Uniquename", uselist=False, back_populates="participant")
+    # quiz_question = relationship("QuizQuestion", uselist=False, back_populates="participant")
     essay = relationship("Essay", uselist=False, back_populates="participant")
     survey_question = relationship("SurveyQuestion", uselist=False, back_populates="participant")
     responses = relationship("Response", back_populates="participant")
 
-class QuizQuestion(db.Model):
-    """Stores the question for each participant."""
+# class QuizQuestion(db.Model):
+#     """Stores the question for each participant."""
+#     id = db.Column(db.Integer, primary_key=True)
+#     content = db.Column(db.Text, nullable=False)
+#     participant_id = db.Column(db.String(80), ForeignKey('participant.id'), unique=True)
+#     participant = relationship("Participant", back_populates="quiz_question")
+
+class Uniquename(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
     participant_id = db.Column(db.String(80), ForeignKey('participant.id'), unique=True)
-    participant = relationship("Participant", back_populates="quiz_question")
+    participant = relationship("Participant", back_populates="uniquename")
 
 class Essay(db.Model):
     """Stores the essay for each participant."""
@@ -55,6 +62,7 @@ class SurveyQuestion(db.Model):
     """Defines which feedback options a participant sees."""
     id = db.Column(db.Integer, primary_key=True)
     participant_id = db.Column(db.String(80), ForeignKey('participant.id'), unique=True)
+    # participant_uniquename = db.Column(db.String(80), ForeignKey('participant.uniquename'), unique=True)
     
     feedback_a_id = db.Column(db.Integer, ForeignKey('feedback.id'))
     feedback_b_id = db.Column(db.Integer, ForeignKey('feedback.id'))
@@ -72,6 +80,7 @@ class Response(db.Model):
     """Stores the participant's submitted answers."""
     id = db.Column(db.Integer, primary_key=True)
     participant_id = db.Column(db.String(80), ForeignKey('participant.id'))
+    participant_uniquename = db.Column(db.String(80), ForeignKey('uniquename.content'))
     survey_question_id = db.Column(db.Integer, ForeignKey('survey_question.id'))
     ranking = db.Column(db.String(100), nullable=False)
     reason = db.Column(db.Text, nullable=True)
@@ -79,6 +88,7 @@ class Response(db.Model):
 
     participant = relationship("Participant", back_populates="responses")
     survey_question = relationship("SurveyQuestion", back_populates="response")
+    # uniquename = relationship("Uniquename", back_populates="response")
 
 
 # --- Web Routes ---
@@ -91,14 +101,15 @@ def survey(participant_id):
         return "Participant not found.", 404
 
     # Fetch the specific question and associated data for this participant
-    quiz_question = participant.quiz_question
+    # quiz_question = participant.quiz_question
+    uniquename = participant.uniquename
     question = participant.survey_question
     essay = participant.essay
 
     if not question or not essay:
         return "Survey content not found for this participant.", 404
         
-    return render_template('index.html', quiz_question=quiz_question, participant=participant, essay=essay, question=question)
+    return render_template('index.html', uniquename=uniquename, participant=participant, essay=essay, question=question)
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -106,17 +117,19 @@ def submit():
     data = request.get_json()
     
     participant_id = data.get('participant_id')
+    participant_uniquename = data.get('participant_uniquename')
     question_id = data.get('question_id')
     ranking = data.get('ranking')
     reason = data.get('reason')
 
     # Basic validation
-    if not all([participant_id, question_id, ranking]):
+    if not all([participant_id, participant_uniquename, question_id, ranking]):
         return jsonify({'success': False, 'message': 'Missing required fields.'}), 400
 
     # Create and save the response
     new_response = Response(
         participant_id=participant_id,
+        participant_uniquename=participant_uniquename,
         survey_question_id=question_id,
         ranking=ranking,
         reason=reason

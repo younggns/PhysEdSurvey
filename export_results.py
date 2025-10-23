@@ -21,7 +21,7 @@ def export_to_csv(output_filename='survey_results.csv'):
         print(f"Found {len(responses)} responses. Writing to '{output_filename}'...")
 
         # Define the CSV headers
-        headers = ['participant_id', 'ranking', 'reason', 'timestamp']
+        headers = ['participant_id', 'participant_uniquename', 'ranking', 'reason', 'timestamp']
         
         # Open the CSV file for writing
         with open(output_filename, 'w', newline='', encoding='utf-8') as csvfile:
@@ -34,6 +34,7 @@ def export_to_csv(output_filename='survey_results.csv'):
             for response in responses:
                 writer.writerow([
                     response.participant_id,
+                    response.participant_uniquename,
                     response.ranking,
                     response.reason,
                     response.timestamp.strftime('%Y-%m-%d %H:%M:%S') if response.timestamp else 'N/A'

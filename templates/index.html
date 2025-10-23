@@ -25,19 +25,19 @@
     <div class="container mx-auto max-w-4xl px-4 py-8 md:py-12">
         
         <header class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">Quiz 6. Choose Better Feedback</h1>
+            <h1 class="text-3xl font-bold text-gray-900">Quiz 6 Survey. Which Feedback Do You Prefer?</h1>
             <p class="text-lg text-gray-600 mt-2">
                 Review the feedback options for your strategy essay and choose an option which you find most helpful.
             </p>
             <!-- <div class="mt-2 text-sm text-gray-500">Participant ID: <span class="font-semibold">{{ participant.id }}</span></div> -->
-            <div class="mt-2 text-sm text-gray-500">Student ID: <span class="font-semibold">{{ participant.id }}</span></div>
+            <div class="mt-2 text-sm text-gray-500">Student ID: <span class="font-semibold">{{ uniquename.content }}</span></div>
         </header>
 
         <!-- Quiz Section -->
         <div class="mb-10 bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
             <h2 class="text-xl font-semibold mb-3">Quiz Question</h2>
             <div class="prose max-w-none text-gray-700">
-                <p>{{ quiz_question.content }}</p>
+                <p>You throw a ball of mass 1.10 kg in the air vertically upward. The ball leaves your hand at a speed of 7.00 m/s and reaches a maximum height of 2.20 m above your hand.  What is the final speed of the ball as it falls back to your hand? Assume that the work done by air drag is the same on the way down as it is on the way up. Magnitude of acceleration due to gravity is 10.0 m/s2. Select the closest answer.</p>
             </div>
             <div class="mt-4">
                 <!-- --- MODIFIED: Image source now points to a single, static file named 'quiz.png' --- -->
@@ -83,6 +83,7 @@
         <!-- Answer Form Section -->
         <form id="survey-form" class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
              <input type="hidden" id="participant-id" value="{{ participant.id }}">
+             <input type="hidden" id="participant-uniquename" value="{{ uniquename.content }}">
              <input type="hidden" id="question-id" value="{{ question.id }}">
 
             <div class="mb-6">
@@ -104,7 +105,7 @@
             </div> -->
 
             <div class="mb-6">
-                <label for="reason1" class="block text-lg font-semibold mb-3">2. Why did you choose this ranking?</label>
+                <label for="reason1" class="block text-lg font-semibold mb-3">2. Why do you prefer this feedback?</label>
                 <p class="text-gray-600 mb-6">Please select all that apply. At least one option is required.</p>
                 <div id="reason-group" class="space-y-4">
                     <div class="flex items-center">
@@ -112,8 +113,8 @@
                         <label for="reason1" class="ml-3 text-lg text-gray-700">Helps me better understand the concept</label>
                     </div>
                     <div class="flex items-center">
-                        <input type="checkbox" id="reason2" name="reason" value="Assesses my strategy in a more detailed way" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                        <label for="reason2" class="ml-3 text-lg text-gray-700">Assesses my strategy in a more detailed way</label>
+                        <input type="checkbox" id="reason2" name="reason" value="Better explains the errors in my strategy" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <label for="reason2" class="ml-3 text-lg text-gray-700">Better explains the errors in my strategy</label>
                     </div>
                     <div class="flex items-center">
                         <input type="checkbox" id="reason3" name="reason" value="Aligns better with my level of knowledge" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
@@ -122,7 +123,8 @@
                     <div class="flex items-center flex-wrap">
                         <input type="checkbox" id="reason-other" name="reason" value="Other" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                         <label for="reason-other" class="ml-3 text-lg text-gray-700">Other</label>
-                        <input type="text" id="other-text" placeholder="Please specify" class="ml-8 p-2 border rounded-md w-64">
+                        <!-- <input type="text" id="other-text" placeholder="Please specify" class="ml-8 p-2 border rounded-md w-64"> -->
+                        <textarea id="other-text" placeholder="Please specify" rows="3" class="mt-2 p-2 border rounded-md w-full ml-8"></textarea>
                     </div>
                 </div>
             </div>
@@ -260,6 +262,7 @@
 
                 const data = {
                     participant_id: document.getElementById('participant-id').value,
+                    participant_uniquename: document.getElementById('participant-uniquename').value,
                     question_id: document.getElementById('question-id').value,
                     ranking: ranking,
                     reason: reason
