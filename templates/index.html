@@ -30,7 +30,7 @@
                 Review the feedback options for your strategy essay and choose an option which you find most helpful.
             </p>
             <!-- <div class="mt-2 text-sm text-gray-500">Participant ID: <span class="font-semibold">{{ participant.id }}</span></div> -->
-            <div class="mt-2 text-sm text-gray-500">Student ID: <span class="font-semibold">{{ uniquename.content }}</span></div>
+            <div class="mt-2 text-sm text-gray-500">Student ID: <span class="font-semibold">{{ quiz_question.content }}</span></div>
         </header>
 
         <!-- Quiz Section -->
@@ -83,7 +83,7 @@
         <!-- Answer Form Section -->
         <form id="survey-form" class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
              <input type="hidden" id="participant-id" value="{{ participant.id }}">
-             <input type="hidden" id="participant-uniquename" value="{{ uniquename.content }}">
+             <input type="hidden" id="participant-uniquename" value="{{ quiz_question.content }}">
              <input type="hidden" id="question-id" value="{{ question.id }}">
 
             <div class="mb-6">

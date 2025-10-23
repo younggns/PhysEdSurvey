@@ -1,7 +1,7 @@
 import csv
 import os
-# from app import app, db, Participant, Essay, QuizQuestion, Feedback, SurveyQuestion
-from app import app, db, Participant, Essay, Uniquename, Feedback, SurveyQuestion
+from app import app, db, Participant, Essay, QuizQuestion, Feedback, SurveyQuestion
+# from app import app, db, Participant, Essay, Uniquename, QuizQuestion, Feedback, SurveyQuestion
 
 def init_db_from_csv(csv_filepath=f'{os.getcwd()}/static/data/feedback.csv'):
     """
@@ -32,10 +32,10 @@ def init_db_from_csv(csv_filepath=f'{os.getcwd()}/static/data/feedback.csv'):
                 
                 # 1. Create the Participant
                 participant = Participant(id=row['ID'])
-                uniquename = Uniquename(participant=participant, content=row['uniquename'])
+                # uniquename = Uniquename(participant=participant, content=row['uniquename'])
                 
                 # 2. Create the Essay and link it to the participant
-                # quiz_question = QuizQuestion(participant=participant, content=row['quiz_question'])
+                quiz_question = QuizQuestion(participant=participant, content=row['quiz_question'])
                 essay = Essay(participant=participant, content=row['essay'])
 
                 # 3. Create the three unique Feedback objects
@@ -55,8 +55,8 @@ def init_db_from_csv(csv_filepath=f'{os.getcwd()}/static/data/feedback.csv'):
                 # SQLAlchemy will handle the relationships and foreign keys
                 db.session.add_all([
                     participant, 
-                    uniquename,
-                    # quiz_question,
+                    # uniquename,
+                    quiz_question,
                     essay, 
                     feedback_a, 
                     feedback_b, 
